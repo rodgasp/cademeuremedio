@@ -1,9 +1,19 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>Cadê meu Remédio?</ion-title>
-  </ion-navbar>
-</ion-header>
-
 <ion-content>
-  <div #map id="map"></div>
+
+<div style="position: absolute; width: 100%; z-index:9999; margin-top: 200px;">
+    <div style="background: rgba(255,255,255,0.8); border-radius:12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block;">
+        <img src="assets/imgs/logo-cademeuremedio.png" style="padding: 10px;" width="100%">
+      
+    </div>
+
+    <div style="background: rgba(255,255,255,0.8); border-radius: 12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block; margin-top: 10px; border: 1px solid black; text-align: left;">
+      <input type="text" style="margin-left: 8px; max-width: 700px; width: 90%; border: 1px; padding: 5px; font-size: 20px;">
+    </div>
+
+    <div style="text-align: right; max-width: 700px; width: 80%; margin: auto;display: block;margin-top: -50px; cursor: pointer; ">
+      <img src="https://cdn4.iconfinder.com/data/icons/meBaze-Freebies/512/search.png" width="70px" style="position: absoluite !important;"> 
+    </div>
+  </div>
+
+  <div #map id="map" style="z-index:9998;"></div>
 </ion-content>
