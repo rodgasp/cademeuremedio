@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpClient } from '@angular/common/http';
-import { Platform } from 'ionic-angular';
-//import { mapStyle } from './mapStyle';
+import { PostoSaude } from './postosaude';
 
 declare var google;
 
@@ -91,23 +90,23 @@ export class HomePage {
         //console.log(places_url);
         var places = this.httpClient.get(places_url);
         places.subscribe(data => {
-          //console.log("DEBUG: places: ");
-          if(!(this.platform.is('cordova') && 
-            (this.platform.is('ios') || this.platform.is('android')))){
-            // for(let row of data) {
-            //   console.log(row);
-            //   var row_position = new google.maps.LatLng(row.lat, row.long);
-            //   var info = [ 
-            //       //(row.tipoUnidade + ' - ' + row.esferaAdministrativa),
-            //       (row.logradouro + ', ' + row.numero),
-            //       (row.bairro),
-            //       (row.telefone?row.telefone:''),
-            //       (row.turnoAtendimento),
-            //       //(row.cidade + ' - ' + row.uf)
-            //   ];
-            //   console.log(info);
-            //   this.addMarker(this.map, row.nomeFantasia, row_position, info);
-            // }
+
+          console.log("DEBUG: places: ");
+
+        
+          for(let row of <PostoSaude[]>data) {
+            console.log(row);
+            var row_position = new google.maps.LatLng(row.lat, row.long);
+            var info = [ 
+                //(row.tipoUnidade + ' - ' + row.esferaAdministrativa),
+                (row.logradouro + ', ' + row.numero),
+                (row.bairro),
+                (row.telefone?row.telefone:''),
+                (row.turnoAtendimento),
+                //(row.cidade + ' - ' + row.uf)
+            ];
+            console.log(info);
+            this.addMarker(this.map, row.nomeFantasia, row_position, info);
           }
         },
         err => {
