@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpClient } from '@angular/common/http';
+import { PostoSaude } from './postosaude';
 
 declare var google;
 
@@ -65,7 +66,7 @@ export class HomePage {
           console.log("DEBUG: places: ");
 
         
-          for(let row of data) {
+          for(let row of <PostoSaude[]>data) {
             console.log(row);
             var row_position = new google.maps.LatLng(row.lat, row.long);
             this.addMarker(this.map, row.nomeFantasia, row_position);
