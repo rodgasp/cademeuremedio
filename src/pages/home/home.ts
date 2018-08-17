@@ -14,7 +14,7 @@ export class HomePage {
   map: any;
   infoWindows: any;
 
-  constructor(private geolocation: Geolocation, public httpClient: HttpClient, public platform: Platform) { }
+  constructor(private geolocation: Geolocation, public httpClient: HttpClient) { }
 
   closeAllInfoWindows = function (map) {
     if(this.infoWindows){
