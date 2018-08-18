@@ -10,28 +10,48 @@
        <ion-icon name="md-locate"></ion-icon>
      </button>
 
-
-  <div style="position: absolute; width: 100%; z-index:9999; margin-top: 200px;">
+  <div id='header' class='header' style="background-color: rgba(0,0,0,0); position: absolute; width: 100%; z-index:9999; margin-top: 200px;">
     <div style="background: rgba(255,255,255,0.8); border-radius:12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block;">
         <img src="assets/imgs/logo-cademeuremedio.png" style="padding: 10px;" width="100%">
     </div>
+    <div *ngIf="!mapView" style="background: rgba(255,255,255,0.8); border-radius:12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block;">
+        <div style="font-size: 16px; padding: 10px; background: #FFF; border-radius: 10px; margin-top: 10px;">
+        Quer saber se tem de graça? <b>Pesquise</b>.<br/>
+        Nao tem no posto de saúde? <b>Reclame</b>.
+      </div>
+    </div>
 
-    <div style="background: rgba(255,255,255,1); border-radius: 12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block; margin-top: 10px; border: 1px solid black; text-align: left;">
-      <!--input type="text" style="margin-left: 8px; max-width: 700px; width: 90%; border: 1px; padding: 5px; font-size: 20px;"-->
-      <ion-input [(ngModel)]="search" (input)="filterItems()" style="margin-left: 8px; max-width: 700px; width: 90%; border: 1px; padding: 5px; font-size: 20px;"></ion-input>
-      <div style="position: absolute;z-index:1;width:90%;color: red;margin-top:  5px;font-size: 16px;font-weight: bold; border: 1px solid red;">
+    <div *ngIf="!mapView" style="background: rgba(255,255,255,1); border-radius: 12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block; margin-top: 10px; border: 1px solid black; text-align: left;">
+      <ion-input placeholder="Informe o nome do remédio" [(ngModel)]="search" (input)="filterItems()" style="margin-left: 8px; max-width: 700px; width: 90%; border: 1px; padding: 5px; font-size: 12px;"></ion-input>
+      <div style="position: absolute;z-index:1;width:90%;color: red;margin-top:  5px;font-size: 16px;font-weight: bold;">
         {{error}}
+      </div>
+      <div style="position: absolute;z-index:1;width:90%;color: blue;margin-top:  5px;font-size: 16px;font-weight: bold;">
+        {{info}}
       </div>
       <ion-content no-padding *ngIf="showSugest">
         <ion-grid ion-fixed no-padding>
           <ion-list style="position: absolute;z-index:1;width:100%;">
-            <ion-item *ngFor=" let row of filtereditems" color="silver" (click)="selectItem(row);">
-              {{row.remedio}}
+            <ion-item *ngFor="let row of filtereditems" color="silver" (click)="selectItem(row);">
+              <span style="font-size: 12px;">{{row.remedio}} {{(row.comercial?'('+row.comercial+')':'')}}</span>
             </ion-item>
           </ion-list>
         </ion-grid>
       </ion-content>
     </div>
+
+    <div *ngIf="mapView" style="background: rgba(255,255,255,1); border-radius: 12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block; margin-top: 10px; border: 1px solid black; text-align: left;">
+      <div style="background: rgba(255,255,255,0.8); border-radius:12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block;">
+        <div style="font-size: 16px; padding: 10px; background: #FFF; border-radius: 10px; margin-top: 10px;">
+          <b>{{search}} é de graça!</b><br/>
+          Veja onde encontrar:
+        </div>
+      </div>
+      <button (click)="deselectItem();" style=" z-index: 999999; float: right; margin-top: -61px; font-size:28px; border: 1px solid black; border-radius: 11px; padding: 13px; margin-right: -1px; background: #000; color: #FFF; ">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+
   </div>
   <div #map id="map" style="z-index:9998;"></div>
 </ion-content>

@@ -3,9 +3,8 @@ import { IonicPage } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpClient } from '@angular/common/http';
 import { PostoSaude } from './postosaude';
-import { Remedios } from './remedios';
-import {NavController} from 'ionic-angular';
-import { Renderer } from '@angular/core';
+import { NavController } from 'ionic-angular';
+import jQuery from "jquery";
 
 declare var google;
 
@@ -16,33 +15,65 @@ declare var google;
 export class HomePage {
   map: any;
   infoWindows: any;
+  markers: any;
   initialMarker: any;
   search: string;
   items: any;
   filtereditems:any;
   showSugest: any;
   error: string;
+  item_selecionado: any;
+  headerClass: any;
+  mapView: any;
 
-  constructor(private geolocation: Geolocation, public httpClient: HttpClient, public renderer : Renderer) {
+  constructor(private geolocation: Geolocation, public httpClient: HttpClient, navCtrl: NavController) {
     this.filtereditems=[];
   }
 
+  setMapOnAll = function(map) {
+    console.log(this.markers);
+    //for(let marker of this.markers) {
+      //marker.setMap(map);
+    //}
+  }
+
+  setStyleInicial = function(){ 
+    console.log("setStyleInicial");
+    jQuery("#header").css('margin-top','200px');
+    this.mapView = false;
+  }
+  setStyleMapa = function(){ 
+    console.log("setStyleMapa");
+    jQuery("#header").css('margin-top','20px');
+    this.mapView = true;
+  }
+
   selectItem = function(selectItem){
-    console.log("selectItem!");
     console.log(selectItem);
     this.search = selectItem.remedio;
-    console.log(this.searchBar);
+    this.item_selecionado = selectItem;
     this.showSugest = false;
+    this.setStyleMapa();
+  }
+
+  deselectItem = function(){
+    console.log("deselectItem");
+    this.setMapOnAll("");
+    this.search = '';
+    this.item_selecionado = '';
+    this.showSugest = false;
+    this.setStyleInicial(); 
   }
 
   filterItems = function(){
     if(this.search==''){
-          this.showSugest = false;
-    }else{
+      this.showSugest = false;
+    }else if(this.search.length>4){
       this.showSugest = true;
       var drugs_url = 'http://cademeuremedio.herokuapp.com/lista/' + this.search;
       var drugs = this.httpClient.get(drugs_url);
       drugs.subscribe(data => {
+        this.error = '';
         if(data.length>0){
           if(!data[0].ERROR){
             console.log("returned data:");
@@ -106,6 +137,10 @@ export class HomePage {
           this.infoWindows = [];
         }
         this.infoWindows.push(infoWindow);
+        if(!this.markers){
+          this.markers = [];
+        }
+        this.markers.push(marker);
       });
     }else{
       this.initialMarker = marker;
@@ -118,7 +153,7 @@ export class HomePage {
         const position = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
 
         const mapOptions = {
-          zoom: 16,
+          zoom: 14,
           center: position,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           fullscreenControl: false,
