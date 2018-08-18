@@ -1,6 +1,5 @@
 # Cadê meu Remédio?
-[b]Frontend[/b]
-Passo a passo para dar build no app (Android):
+Frontend - Passo a passo para dar build no app (Android):
 * Instalar o NodeJS (versão 10.9.0 ou posterior), disponível em https://nodejs.org/en/;
 * Instalar o Git, disponível em https://git-scm.com/downloads;
 * Após instalar o NodeJS, abrir uma janela do terminal e executar os comandos “npm install -g cordova” e “npm install -g ionic”;
