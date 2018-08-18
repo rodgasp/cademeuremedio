@@ -13,10 +13,17 @@ declare var google;
 export class HomePage {
   map: any;
   infoWindows: any;
+  initialMarker: any;
 
   constructor(private geolocation: Geolocation, public httpClient: HttpClient) { }
 
-  closeAllInfoWindows = function (map) {
+  resetCenter = function(){
+    console.log('recenter');
+    console.log(this.initialMarker.getPosition());
+    this.map.setCenter(this.initialMarker.getPosition())
+  }
+
+  closeAllInfoWindows = function () {
     if(this.infoWindows){
       for(let infoWindow of this.infoWindows) {
         infoWindow.close();
@@ -30,36 +37,40 @@ export class HomePage {
     // }
     var marker = new google.maps.Marker({
       title: title,
-      icon: { url : 'assets/imgs/marker.png' },
+      icon: { url : (title=='ME'?'assets/imgs/marker-me.png':'assets/imgs/marker.png') },
       animation: 4,
       position: position,
       map: map
     });
-    var infoWindowContent = '<div id="content" style= "max-width: 90%;">' + 
-      '<span style="font-face: arial; font-size: 14px; font-weight: bold;">' + 
-        title + '</span><br/><span style="font-face: arial; font-size: 14px;">';
-    var i = 0;
-    if(info){
-      for(let row of info) {
-        if(row){
-          infoWindowContent+= row + '<br/>';
-          i++;
+    if(title!='ME'){
+      var infoWindowContent = '<div id="content" style= "max-width: 90%;">' + 
+        '<span style="font-face: arial; font-size: 14px; font-weight: bold;">' + 
+          title + '</span><br/><span style="font-face: arial; font-size: 14px;">';
+      var i = 0;
+      if(info){
+        for(let row of info) {
+          if(row){
+            infoWindowContent+= row + '<br/>';
+            i++;
+          }
         }
       }
+      infoWindowContent+='</span><hr style="width: 90%;" />_<hr style="width: 90%;" />_' + 
+      '</div>';
+      var infoWindow = new google.maps.InfoWindow({
+        content: infoWindowContent
+      });
+      marker.addListener('click', () => {
+        this.closeAllInfoWindows();
+        infoWindow.open(this.map, marker);
+        if(!this.infoWindows){
+          this.infoWindows = [];
+        }
+        this.infoWindows.push(infoWindow);
+      });
+    }else{
+      this.initialMarker = marker;
     }
-    infoWindowContent+='</span><hr style="width: 90%;" />_<hr style="width: 90%;" />_' + 
-    '</div>';
-    var infoWindow = new google.maps.InfoWindow({
-      content: infoWindowContent
-    });
-    marker.addListener('click', () => {
-      this.closeAllInfoWindows(this.map);
-      infoWindow.open(this.map, marker);
-      if(!this.infoWindows){
-        this.infoWindows = [];
-      }
-      this.infoWindows.push(infoWindow);
-    });
     //return marker;
   }
 
@@ -71,6 +82,7 @@ export class HomePage {
         const mapOptions = {
           zoom: 16,
           center: position,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
           fullscreenControl: false,
           mapTypeControl: false,
           streetViewControl: false,
@@ -81,23 +93,109 @@ export class HomePage {
             {
               featureType: 'administrative.locality',
               elementType: 'labels.text.fill',
-              stylers: [{color: '#d59563'}]
+              stylers: [{ visibility: "off" }]
             },
             {
-              featureType: 'poi',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#d59563'}]
-            },
-            {
-              featureType: 'poi.park',
-              elementType: 'geometry',
-              stylers: [{color: '#263c3f'}]
-            },
-            {
-              featureType: 'poi.park',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#6b9a76'}]
-            },
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#283d6a"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#6f9ba5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#1d2c4d"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.attraction",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.business",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.government",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.medical",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#023e58"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#3C7680"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.place_of_worship",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.school",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.sports_complex",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
             {
               featureType: 'road',
               elementType: 'geometry',
