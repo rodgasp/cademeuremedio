@@ -33,7 +33,7 @@ export class HomePage {
       icon: { url : 'assets/imgs/marker.png' },
       animation: 4,
       position: position,
-      map: map,
+      map: map
     });
     var infoWindowContent = '<div id="content" style= "max-width: 90%;">' + 
       '<span style="font-face: arial; font-size: 14px; font-weight: bold;">' + 
@@ -71,9 +71,89 @@ export class HomePage {
         const mapOptions = {
           zoom: 16,
           center: position,
-          fullscreenControlOptions: false,
+          fullscreenControl: false,
           mapTypeControl: false,
           streetViewControl: false,
+          styles: [
+            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+            {
+              featureType: 'administrative.locality',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'geometry',
+              stylers: [{color: '#263c3f'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#6b9a76'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{color: '#38414e'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#212a37'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#9ca5b3'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{color: '#746855'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#1f2835'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#f3d19c'}]
+            },
+            {
+              featureType: 'transit',
+              elementType: 'geometry',
+              stylers: [{color: '#2f3948'}]
+            },
+            {
+              featureType: 'transit.station',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{color: '#17263c'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#515c6d'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.stroke',
+              stylers: [{color: '#17263c'}]
+            }
+          ]
         }
 
         this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -91,11 +171,11 @@ export class HomePage {
         var places = this.httpClient.get(places_url);
         places.subscribe(data => {
 
-          console.log("DEBUG: places: ");
+          //console.log("DEBUG: places: ");
 
         
           for(let row of <PostoSaude[]>data) {
-            console.log(row);
+            //console.log(row);
             var row_position = new google.maps.LatLng(row.lat, row.long);
             var info = [ 
                 //(row.tipoUnidade + ' - ' + row.esferaAdministrativa),
@@ -105,7 +185,7 @@ export class HomePage {
                 (row.turnoAtendimento),
                 //(row.cidade + ' - ' + row.uf)
             ];
-            console.log(info);
+            //console.log(info);
             this.addMarker(this.map, row.nomeFantasia, row_position, info);
           }
         },
