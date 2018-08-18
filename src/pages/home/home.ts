@@ -3,7 +3,6 @@ import { IonicPage } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpClient } from '@angular/common/http';
 import { PostoSaude } from './postosaude';
-import { Remedios } from './remedios';
 import {NavController} from 'ionic-angular';
 import { Renderer } from '@angular/core';
 
