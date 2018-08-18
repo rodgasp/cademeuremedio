@@ -3,6 +3,9 @@ import { IonicPage } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpClient } from '@angular/common/http';
 import { PostoSaude } from './postosaude';
+import { Remedios } from './remedios';
+import {NavController} from 'ionic-angular';
+import { Renderer } from '@angular/core';
 
 declare var google;
 
@@ -14,8 +17,47 @@ export class HomePage {
   map: any;
   infoWindows: any;
   initialMarker: any;
+  search: string;
+  items: any;
+  filtereditems:any;
+  showSugest: any;
+  error: string;
 
-  constructor(private geolocation: Geolocation, public httpClient: HttpClient) { }
+  constructor(private geolocation: Geolocation, public httpClient: HttpClient, public renderer : Renderer) {
+    this.filtereditems=[];
+  }
+
+  selectItem = function(selectItem){
+    console.log("selectItem!");
+    console.log(selectItem);
+    this.search = selectItem.remedio;
+    console.log(this.searchBar);
+    this.showSugest = false;
+  }
+
+  filterItems = function(){
+    if(this.search==''){
+          this.showSugest = false;
+    }else{
+      this.showSugest = true;
+      var drugs_url = 'http://cademeuremedio.herokuapp.com/lista/' + this.search;
+      var drugs = this.httpClient.get(drugs_url);
+      drugs.subscribe(data => {
+        if(data.length>0){
+          if(!data[0].ERROR){
+            console.log("returned data:");
+            console.log(data);
+            this.filtereditems = data;
+          }else{
+            console.log('returned error:');
+            console.log(data[0].ERROR);
+            this.showSugest = false;
+            this.error = data[0].ERROR;
+          }
+        }
+      });
+    }
+  }
 
   resetCenter = function(){
     console.log('recenter');
@@ -32,9 +74,6 @@ export class HomePage {
   }
 
   addMarker = function(map, title, position, info) {
-    // if(!info){
-    //   info = ['','',''];
-    // }
     var marker = new google.maps.Marker({
       title: title,
       icon: { url : (title=='ME'?'assets/imgs/marker-me.png':'assets/imgs/marker.png') },
@@ -71,7 +110,6 @@ export class HomePage {
     }else{
       this.initialMarker = marker;
     }
-    //return marker;
   }
 
   ionViewDidLoad() {
