@@ -160,7 +160,7 @@ export class HomePage {
     console.log("mapCenter.lng");
     console.log(mapCenter.lng);
     var places_raio = 50;
-    var places_url = 'http://mobile-aceite.tcu.gov.br/mapa-da-saude/rest/estabelecimentos' +
+    var places_url = 'https://cademeuremedio.herokuapp.com/estabelecimentos' +
       '/latitude/' + this.coords.latitude +
       '/longitude/' + this.coords.longitude +
       '/raio/' + places_raio +
