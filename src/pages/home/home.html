@@ -1,57 +1,61 @@
-<ion-content>
-<button style="
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    z-index: 9999;
-    background-color: white;
-    color: #000;
-" ion-button icon-only (click) ="resetCenter()"  >
-       <ion-icon name="md-locate"></ion-icon>
-     </button>
-
-  <div id='header' class='header' style="background-color: rgba(0,0,0,0); position: absolute; width: 100%; z-index:9999; margin-top: 200px;">
-    <div style="background: rgba(255,255,255,0.8); border-radius:12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block;">
-        <img src="assets/imgs/logo-cademeuremedio.png" style="padding: 10px;" width="100%">
+<ion-header id='header' class='header' style="background-color: rgba(0,0,0,0); width: 100%; z-index:9999; padding-bottom: 10px;"> 
+  <div style="background: rgba(255,255,255,1); text-align: center; max-width: 700px; width: 100%; margin: auto; display: block; padding: 10px 0 0px 0;">
+      <img src="assets/imgs/logo-new.png" width="50%">
+  </div>
+  <div style="background: rgba(255,255,255,0.8); text-align: center; max-width: 700px; width: 100%; margin: auto; display: block;">
+      <div *ngIf="!mapView"  style="font-size: 16px;">
+          <p>Quer saber se tem de graça? <b style="color: #BE5E9F;">Pesquise.</b><br/>
+          Não tem no posto de saúde? <b style="color: #BE5E9F;">Reclame.</b></p>
     </div>
-    <div *ngIf="!mapView" style="background: rgba(255,255,255,0.8); border-radius:12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block;">
-        <div style="font-size: 16px; padding: 10px; background: #FFF; border-radius: 10px; margin-top: 10px;">
-        Quer saber se tem de graça? <b>Pesquise</b>.<br/>
-        Nao tem no posto de saúde? <b>Reclame</b>.
-      </div>
+    <div *ngIf="mapView"  style="font-size: 16px;">
+          <p><b style="color: #BE5E9F;">{{search}}</b> é de graça!<br/>
+          Veja onde encontrar:</p>
     </div>
+  </div>
+  
+  <div style="width: 80%;
+    position: relative;
+    margin: 0 auto;
+    text-align: center;">
+    <ion-input *ngIf="!mapView" placeholder="Informe o nome do remédio" [(ngModel)]="search" (input)="filterItems()" style="border-radius: 10px;
+    padding: 0px;
+    font-size: 1.2em;
+    border: solid 2px #45AEB1;"></ion-input>
 
-    <div *ngIf="!mapView" style="background: rgba(255,255,255,1); border-radius: 12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block; margin-top: 10px; border: 1px solid black; text-align: left;">
-      <ion-input placeholder="Informe o nome do remédio" [(ngModel)]="search" (input)="filterItems()" style="margin-left: 8px; max-width: 700px; width: 90%; border: 1px; padding: 5px; font-size: 12px;"></ion-input>
-      <div style="position: absolute;z-index:1;width:90%;color: red;margin-top:  5px;font-size: 16px;font-weight: bold;">
-        {{error}}
-      </div>
-      <div style="position: absolute;z-index:1;width:90%;color: blue;margin-top:  5px;font-size: 16px;font-weight: bold;">
-        {{info}}
-      </div>
-      <ion-content no-padding *ngIf="showSugest">
-        <ion-grid ion-fixed no-padding>
-          <ion-list style="position: absolute;z-index:1;width:100%;">
-            <ion-item *ngFor="let row of filtereditems" color="silver" (click)="selectItem(row);">
-              <span style="font-size: 12px;">{{row.remedio}} {{(row.comercial?'('+row.comercial+')':'')}}</span>
-            </ion-item>
-          </ion-list>
-        </ion-grid>
-      </ion-content>
-    </div>
-
-    <div *ngIf="mapView" style="background: rgba(255,255,255,1); border-radius: 12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block; margin-top: 10px; border: 1px solid black; text-align: left;">
-      <div style="background: rgba(255,255,255,0.8); border-radius:12px; text-align: center; max-width: 700px; width: 80%; margin: auto; display: block;">
-        <div style="font-size: 16px; padding: 10px; background: #FFF; border-radius: 10px; margin-top: 10px;">
-          <b>{{search}} é de graça!</b><br/>
-          Veja onde encontrar:
-        </div>
-      </div>
-      <button (click)="deselectItem();" style=" z-index: 999999; float: right; margin-top: -61px; font-size:28px; border: 1px solid black; border-radius: 11px; padding: 13px; margin-right: -1px; background: #000; color: #FFF; ">
+    <div *ngIf="mapView" style="max-width: 700px;width: 80%;margin: auto;display: block;text-align: right;color: #FFF;height: 0;">
+      <button (click)="deselectItem();" style="z-index: 9999;float: right;margin-top: 4px;font-size:28px;border-radius: 6px;padding: 3px 11px;margin-right: -1px;background: #BE5E9F;color: #FFF;position: absolute;margin-right: 0;margin-left: -1px;">
         <ion-icon name="close"></ion-icon>
       </button>
     </div>
 
+    <input disabled="disabled" *ngIf="mapView" [(ngModel)]="search" (input)="filterItems()" style="border-radius: 10px;
+    padding: 12px 10px;
+    width: 100%;
+    font-size: 1.2em;
+    border: solid 2px #45AEB1;"/>
+
+    <div style="position: absolute;z-index:1;width:90%;color: red;margin-top:  5px;font-size: 16px;font-weight: bold;">
+      {{error}}
+    </div>
+    <div style="position: absolute;z-index:1;width:90%;color: blue;margin-top:  5px;font-size: 16px;font-weight: bold;">
+      {{info}}
+    </div>
+    <ion-content no-padding *ngIf="showSugest">
+      <ion-grid ion-fixed no-padding>
+        <ion-list style="position: absolute;z-index:1;width:100%;">
+          <ion-item *ngFor="let row of filtereditems" color="silver" (click)="selectItem(row);">
+            <span style="font-size: 12px;">{{row.remedio}} {{(row.comercial?'('+row.comercial+')':'')}}</span>
+          </ion-item>
+        </ion-list>
+      </ion-grid>
+    </ion-content>
   </div>
+
+
+</ion-header>
+<ion-content>
   <div #map id="map" style="z-index:9998;"></div>
+  <button style=" position: absolute; right: 10px; top: 10px; z-index: 9999; background-color: white; color: #000;" ion-button icon-only (click) ="resetCenter()">
+  <ion-icon name="md-locate"></ion-icon>
+</button>
 </ion-content>

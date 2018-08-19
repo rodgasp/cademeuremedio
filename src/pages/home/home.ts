@@ -25,40 +25,44 @@ export class HomePage {
   item_selecionado: any;
   headerClass: any;
   mapView: any;
+  coords: any;
 
   constructor(private geolocation: Geolocation, public httpClient: HttpClient, navCtrl: NavController) {
     this.filtereditems=[];
   }
 
   setMapOnAll = function(map) {
-    console.log(this.markers);
-    //for(let marker of this.markers) {
-      //marker.setMap(map);
-    //}
+    //console.log("MARKERS:");
+    //console.log(this.markers);
+    for(let marker of this.markers) {
+      marker.setMap(map);
+    }
   }
 
   setStyleInicial = function(){ 
     console.log("setStyleInicial");
-    jQuery("#header").css('margin-top','200px');
+    //jQuery("#header").css('margin-top','200px');
     this.mapView = false;
   }
   setStyleMapa = function(){ 
     console.log("setStyleMapa");
-    jQuery("#header").css('margin-top','20px');
+    //jQuery("#header").css('margin-top','20px');
     this.mapView = true;
   }
 
   selectItem = function(selectItem){
+    console.log('selectItem');
     console.log(selectItem);
     this.search = selectItem.remedio;
     this.item_selecionado = selectItem;
     this.showSugest = false;
     this.setStyleMapa();
+    this.buscarPostos();
   }
 
   deselectItem = function(){
     console.log("deselectItem");
-    this.setMapOnAll("");
+    this.setMapOnAll(null);
     this.search = '';
     this.item_selecionado = '';
     this.showSugest = false;
@@ -131,518 +135,351 @@ export class HomePage {
         content: infoWindowContent
       });
       marker.addListener('click', () => {
+        this.map.setCenter(marker.getPosition());
         this.closeAllInfoWindows();
         infoWindow.open(this.map, marker);
         if(!this.infoWindows){
           this.infoWindows = [];
         }
         this.infoWindows.push(infoWindow);
-        if(!this.markers){
-          this.markers = [];
-        }
-        this.markers.push(marker);
       });
+      if(!this.markers){
+        this.markers = [];
+      }
+      this.markers.push(marker);
     }else{
       this.initialMarker = marker;
     }
+  }
+
+  buscarPostos = function(){
+    console.log("map.getCenter();");
+    var mapCenter = this.map.getCenter();
+    console.log("mapCenter.lat");
+    console.log(mapCenter.lat);
+    console.log("mapCenter.lng");
+    console.log(mapCenter.lng);
+    var places_raio = 50;
+    var places_url = 'http://mobile-aceite.tcu.gov.br/mapa-da-saude/rest/estabelecimentos' +
+      '/latitude/' + this.coords.latitude +
+      '/longitude/' + this.coords.longitude +
+      '/raio/' + places_raio +
+      '?categoria=POSTO%20DE%20SA%C3%9ADE';
+    var places = this.httpClient.get(places_url);
+    places.subscribe(data => {
+      for(let row of <PostoSaude[]>data) {
+        var row_position = new google.maps.LatLng(row.lat, row.long);
+        var info = [ 
+            (row.logradouro + ', ' + row.numero),
+            (row.bairro),
+            (row.telefone?row.telefone:''),
+            (row.turnoAtendimento),
+        ];
+        this.addMarker(this.map, row.nomeFantasia, row_position, info);
+      }
+    },
+    err => {
+      console.log("Error occured.")
+    });
   }
 
   ionViewDidLoad() {
     this.geolocation.getCurrentPosition()
       .then((resp) => {
         const position = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
+        this.coords = resp.coords;
 
         const mapOptions = {
-          zoom: 14,
+          zoom: 13,
           center: position,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           fullscreenControl: false,
           mapTypeControl: false,
           streetViewControl: false,
           styles: [
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#ebe3cd"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#523735"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#f5f1e6"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#c9b2a6"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#dcd2be"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#ae9e90"
-      }
-    ]
-  },
-  {
-    "featureType": "landscape.natural",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.attraction",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.business",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.government",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.medical",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.place_of_worship",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.school",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.sports_complex",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#f5f1e6"
-      }
-    ]
-  },
-  {
-    "featureType": "road.arterial",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#fdfcf8"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#f8c967"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#e9bc62"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway.controlled_access",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#e98d58"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway.controlled_access",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#db8555"
-      }
-    ]
-  },
-  {
-    "featureType": "road.local",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#806b63"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#8f7d77"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#ebe3cd"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.station",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#b9d3c2"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#92998d"
-      }
-    ]
-  }
-]
-/*[
-            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
-            {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
-            {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
-            {
-              featureType: 'administrative.locality',
-              elementType: 'labels.text.fill',
-              stylers: [{ visibility: "off" }]
-            },
-            {
-              "featureType": "poi",
-              "elementType": "geometry",
-              "stylers": [
-                {
-                  "color": "#283d6a"
+                    {
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#ebe3cd"
+                        }
+                      ]
+                    },
+                    {
+                      "elementType": "labels.text.fill",
+                      "stylers": [
+                        {
+                          "color": "#523735"
+                        }
+                      ]
+                    },
+                    {
+                      "elementType": "labels.text.stroke",
+                      "stylers": [
+                        {
+                          "color": "#f5f1e6"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "administrative",
+                      "elementType": "geometry.stroke",
+                      "stylers": [
+                        {
+                          "color": "#c9b2a6"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "administrative.land_parcel",
+                      "elementType": "geometry.stroke",
+                      "stylers": [
+                        {
+                          "color": "#dcd2be"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "administrative.land_parcel",
+                      "elementType": "labels.text.fill",
+                      "stylers": [
+                        {
+                          "color": "#ae9e90"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "landscape.natural",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#dfd2ae"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi",
+                      "elementType": "labels.text.fill",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi",
+                      "elementType": "labels.text.stroke",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.attraction",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.business",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.government",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.medical",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.park",
+                      "elementType": "geometry.fill",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.park",
+                      "elementType": "labels.text.fill",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.place_of_worship",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.school",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "poi.sports_complex",
+                      "stylers": [
+                        {
+                          "visibility": "off"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "road",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#f5f1e6"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "road.arterial",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#fdfcf8"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "road.highway",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#f8c967"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "road.highway",
+                      "elementType": "geometry.stroke",
+                      "stylers": [
+                        {
+                          "color": "#e9bc62"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "road.highway.controlled_access",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#e98d58"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "road.highway.controlled_access",
+                      "elementType": "geometry.stroke",
+                      "stylers": [
+                        {
+                          "color": "#db8555"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "road.local",
+                      "elementType": "labels.text.fill",
+                      "stylers": [
+                        {
+                          "color": "#806b63"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "transit.line",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#dfd2ae"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "transit.line",
+                      "elementType": "labels.text.fill",
+                      "stylers": [
+                        {
+                          "color": "#8f7d77"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "transit.line",
+                      "elementType": "labels.text.stroke",
+                      "stylers": [
+                        {
+                          "color": "#ebe3cd"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "transit.station",
+                      "elementType": "geometry",
+                      "stylers": [
+                        {
+                          "color": "#dfd2ae"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "water",
+                      "elementType": "geometry.fill",
+                      "stylers": [
+                        {
+                          "color": "#b9d3c2"
+                        }
+                      ]
+                    },
+                    {
+                      "featureType": "water",
+                      "elementType": "labels.text.fill",
+                      "stylers": [
+                        {
+                          "color": "#92998d"
+                        }
+                      ]
+                    }
+                  ]
                 }
-              ]
-            },
-            {
-              "featureType": "poi",
-              "elementType": "labels.text.fill",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi",
-              "elementType": "labels.text.stroke",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.attraction",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.business",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.government",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.medical",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.park",
-              "elementType": "geometry.fill",
-              "stylers": [
-                {
-                  "color": "#023e58"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.park",
-              "elementType": "labels.text.fill",
-              "stylers": [
-                {
-                  "color": "#3C7680"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.place_of_worship",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.school",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              "featureType": "poi.sports_complex",
-              "stylers": [
-                {
-                  "visibility": "off"
-                }
-              ]
-            },
-            {
-              featureType: 'road',
-              elementType: 'geometry',
-              stylers: [{color: '#38414e'}]
-            },
-            {
-              featureType: 'road',
-              elementType: 'geometry.stroke',
-              stylers: [{color: '#212a37'}]
-            },
-            {
-              featureType: 'road',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#9ca5b3'}]
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'geometry',
-              stylers: [{color: '#746855'}]
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'geometry.stroke',
-              stylers: [{color: '#1f2835'}]
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#f3d19c'}]
-            },
-            {
-              featureType: 'transit',
-              elementType: 'geometry',
-              stylers: [{color: '#2f3948'}]
-            },
-            {
-              featureType: 'transit.station',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#d59563'}]
-            },
-            {
-              featureType: 'water',
-              elementType: 'geometry',
-              stylers: [{color: '#17263c'}]
-            },
-            {
-              featureType: 'water',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#515c6d'}]
-            },
-            {
-              featureType: 'water',
-              elementType: 'labels.text.stroke',
-              stylers: [{color: '#17263c'}]
-            }
-          ]*/
-        }
 
         this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
         this.addMarker(this.map, "ME", position, false);
-
-        var places_raio = 50;
-        var places_url = 'http://mobile-aceite.tcu.gov.br/mapa-da-saude/rest/estabelecimentos' +
-          '/latitude/' + resp.coords.latitude +
-          '/longitude/' + resp.coords.longitude +
-          '/raio/' + places_raio +
-          '?categoria=POSTO%20DE%20SA%C3%9ADE';
-        //console.log("DEBUG: places_url: ");
-        //console.log(places_url);
-        var places = this.httpClient.get(places_url);
-        places.subscribe(data => {
-
-          //console.log("DEBUG: places: ");
-
-        
-          for(let row of <PostoSaude[]>data) {
-            //console.log(row);
-            var row_position = new google.maps.LatLng(row.lat, row.long);
-            var info = [ 
-                //(row.tipoUnidade + ' - ' + row.esferaAdministrativa),
-                (row.logradouro + ', ' + row.numero),
-                (row.bairro),
-                (row.telefone?row.telefone:''),
-                (row.turnoAtendimento),
-                //(row.cidade + ' - ' + row.uf)
-            ];
-            //console.log(info);
-            this.addMarker(this.map, row.nomeFantasia, row_position, info);
-          }
-        },
-        err => {
-          console.log("Error occured.")
-        })
       }).catch((error) => {
         console.log('Erro ao recuperar sua posição', error);
       });
