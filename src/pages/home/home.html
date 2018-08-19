@@ -33,9 +33,20 @@
     font-size: 1.2em;
     border: solid 2px #45AEB1;"/>
 
-    <div style="position: absolute;z-index:1;width:90%;color: red;margin-top:  5px;font-size: 16px;font-weight: bold;">
+    <!--div style="position: absolute;z-index:1;width:90%;color: red;margin-top:  5px;font-size: 16px;font-weight: bold;">
       {{error}}
-    </div>
+    </div-->
+
+    <ion-content no-padding *ngIf="error">
+      <ion-grid ion-fixed no-padding>
+        <ion-list style="position: absolute;z-index:1;width:100%;">
+          <ion-item color="red">
+            <span style="font-size: 12px;">{{error}}</span>
+          </ion-item>
+        </ion-list>
+      </ion-grid>
+    </ion-content>
+
     <div style="position: absolute;z-index:1;width:90%;color: blue;margin-top:  5px;font-size: 16px;font-weight: bold;">
       {{info}}
     </div>

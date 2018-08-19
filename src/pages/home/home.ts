@@ -87,6 +87,7 @@ export class HomePage {
   filterItems = function(){
     if(this.search==''){
       this.showSugest = false;
+      this.error = '';
     }else if(this.search.length>4){
       this.showSugest = true;
       var drugs_url = 'https://cademeuremedio.herokuapp.com/lista/' + this.search;
