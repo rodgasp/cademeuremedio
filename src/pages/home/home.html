@@ -8,11 +8,10 @@
           Não tem no posto de saúde? <b style="color: #BE5E9F;">Reclame.</b></p>
     </div>
     <div *ngIf="mapView"  style="font-size: 16px;">
-          <p><b style="color: #BE5E9F;">{{search}}</b> é de graça!<br/>
-          Veja onde encontrar:</p>
+          <p><b style="color: #BE5E9F;">{{search}}</b><br/>é de graça! Veja onde encontrar:</p>
     </div>
   </div>
-  
+
   <div style="width: 80%;
     position: relative;
     margin: 0 auto;
@@ -22,8 +21,8 @@
     font-size: 1.2em;
     border: solid 2px #45AEB1;"></ion-input>
 
-    <div *ngIf="mapView" style="max-width: 700px;width: 80%;margin: auto;display: block;text-align: right;color: #FFF;height: 0;">
-      <button (click)="deselectItem();" style="z-index: 9999;float: right;margin-top: 4px;font-size:28px;border-radius: 6px;padding: 3px 11px;margin-right: -1px;background: #BE5E9F;color: #FFF;position: absolute;margin-right: 0;margin-left: -1px;">
+    <div *ngIf="mapView" style="max-width: 700px;width: 100%;margin: auto;display: block;text-align: right;color: #FFF;height: 0;">
+      <button (click)="deselectItem();" style="z-index: 9999;float: right;margin-top: 4px;font-size:28px;border-radius: 6px;padding: 3px 11px;margin-right: -1px;background: #BE5E9F;color: #FFF;position: absolute;margin-right: 0;margin-left: -45px;">
         <ion-icon name="close"></ion-icon>
       </button>
     </div>
