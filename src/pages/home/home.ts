@@ -612,7 +612,7 @@ export class HomePage {
         this.addMarker(this.map, "ME", position, false);
 
         var places_raio = 50;
-        var places_url = 'http://mobile-aceite.tcu.gov.br/mapa-da-saude/rest/estabelecimentos' +
+        var places_url = 'https://ps.cademeuremedio.com.br/mapa-da-saude/rest/estabelecimentos' +
           '/latitude/' + resp.coords.latitude +
           '/longitude/' + resp.coords.longitude +
           '/raio/' + places_raio +
