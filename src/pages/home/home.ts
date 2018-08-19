@@ -162,8 +162,8 @@ export class HomePage {
         this.closeAllInfoWindows();
         infoWindow.addListener('domready', () => {
           document.getElementById('reclamar').addEventListener('click', ($element) => {
-            console.log($element.target.attributes[0].value);
-            var str = $element.target.attributes[0].value;
+            let element = $element.target as HTMLInputElement
+            var str = jQuery(element).attr('rel');
             var ids = str.split("|");
             console.log(ids);
             jQuery.get( "https://cademeuremedio.herokuapp.com/denuncia/" + ids[0] + "/" + ids[1], function( data ) {
@@ -516,7 +516,7 @@ export class HomePage {
                 }
 
         this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-        this.addMarker(this.map, "ME", position, false);
+        this.addMarker(this.map, "ME", position, false, false);
 
       }).catch((error) => {
         console.log('Erro ao recuperar sua posição', error);
