@@ -146,10 +146,13 @@ export class HomePage {
       }
       infoWindowContent+='</span><hr style="width: 90%;" />_<hr style="width: 90%;" />' + 
       '<div style="width: 100%: text-align: center;">' + 
-      '<div rel="' + this.item_selecionado.id + '|' + id + '" class="reclamar" id="reclamar" style="width: 150px;background: #BE5E9F; color: #FFF; border-radius: 5px;' + 
+      '<div id="btncontainer"><div rel="' + this.item_selecionado.id + '|' + id + '" id="reclamar" style="width: 150px;background: #BE5E9F; color: #FFF; border-radius: 5px;' + 
       'font-weight: bold;text-align: center;padding: 10px 5px;display: block; margin-left: 50px;'+ 
       'padding: 0px 10px 0px 10px;">RECLAMAR<br/>' +
-      'Falta esse remédio!</div></div>'+
+      'Falta esse remédio!</div>'+
+      '<div rel="' + this.item_selecionado.id + '|' + id + '" id="reclamou" style="width: 250px;background: #45AEB1;color: #FFF;border-radius: 5px;font-weight: bold;text-align: center;'+ 
+      'padding: 10px 5px;display: none;margin-left: 20px;padding: 0px 10px 0px 10px;">Agradecemos a contribuição!<br>Você reclamou</div>'+
+      '</div></div>'+
       '</div>';
       var infoWindow = new google.maps.InfoWindow({
         content: infoWindowContent
@@ -164,8 +167,10 @@ export class HomePage {
             var ids = str.split("|");
             console.log(ids);
             jQuery.get( "https://cademeuremedio.herokuapp.com/denuncia/" + ids[0] + "/" + ids[1], function( data ) {
-              console.log( "Data Loaded: ");
+              console.log( "Reclamacao data loaded: ");
               console.log( data );
+              jQuery('#reclamar').hide();
+              jQuery('#reclamou').show();
             });
           });
         });
