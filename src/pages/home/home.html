@@ -68,4 +68,7 @@
   <button style=" position: absolute; right: 10px; top: 10px; z-index: 9999; background-color: white; color: #000;" ion-button icon-only (click) ="resetCenter()">
   <ion-icon name="md-locate"></ion-icon>
 </button>
+  <button *ngIf="mapView" style=" position: absolute; left: 10px; top: 10px; z-index: 9999; background-color: white; color: #000;" ion-button icon-only (click) ="buscarPostos()">
+  <ion-icon name="md-refresh"></ion-icon>
+</button>
 </ion-content>
