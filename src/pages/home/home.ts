@@ -144,8 +144,10 @@ export class HomePage {
       console.log("IGUAL!");
     }else{
       if(this.item_selecionado){
+        console.log('this.item_selecionado');
+        console.log(this.item_selecionado);
         console.log("chamando score:");
-        var score_url = 'https://cademeuremedio.herokuapp.com/score/'+this.item_selecionado.id+'/'+id+'/450540';
+        var score_url = 'https://cademeuremedio.herokuapp.com/score/'+id+'/'+this.item_selecionado.id+'/450540';
         var score = this.httpClient.get(score_url); 
         score.subscribe(data => {
           if(data){
