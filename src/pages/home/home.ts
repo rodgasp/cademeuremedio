@@ -74,7 +74,7 @@ export class HomePage {
       this.showSugest = false;
     }else if(this.search.length>4){
       this.showSugest = true;
-      var drugs_url = 'http://cademeuremedio.herokuapp.com/lista/' + this.search;
+      var drugs_url = 'https://cademeuremedio.herokuapp.com/lista/' + this.search;
       var drugs = this.httpClient.get(drugs_url);
       drugs.subscribe(data => {
         this.error = '';
@@ -480,6 +480,7 @@ export class HomePage {
 
         this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
         this.addMarker(this.map, "ME", position, false);
+
       }).catch((error) => {
         console.log('Erro ao recuperar sua posição', error);
       });
