@@ -31,11 +31,26 @@ export class HomePage {
     this.filtereditems=[];
   }
 
+  reclamar = function(posto, remedio, target){
+    var reclamar_url = 'https://cademeuremedio.herokuapp.com/denuncia/' + posto +
+      '/' + remedio
+    var reclamar = this.httpClient.get(reclamar_url);
+    reclamar.subscribe(data => {
+      this.error = '';
+      if(data.length>0){
+        console.log("returned data reclamar:");
+        console.log(data);
+      }
+    });
+  }
+
   setMapOnAll = function(map) {
     //console.log("MARKERS:");
     //console.log(this.markers);
-    for(let marker of this.markers) {
-      marker.setMap(map);
+    if(this.markers.length>0){
+      for(let marker of this.markers) {
+        marker.setMap(map);
+      }
     }
   }
 
@@ -108,7 +123,7 @@ export class HomePage {
     }
   }
 
-  addMarker = function(map, title, position, info) {
+  addMarker = function(map, title, position, info, id) {
     var marker = new google.maps.Marker({
       title: title,
       icon: { url : (title=='ME'?'assets/imgs/marker-me.png':'assets/imgs/marker.png') },
@@ -129,7 +144,12 @@ export class HomePage {
           }
         }
       }
-      infoWindowContent+='</span><hr style="width: 90%;" />_<hr style="width: 90%;" />_' + 
+      infoWindowContent+='</span><hr style="width: 90%;" />_<hr style="width: 90%;" />' + 
+      '<div style="width: 100%: text-align: center;">' + 
+      '<div rel="' + this.item_selecionado.id + '|' + id + '" class="reclamar" id="reclamar" style="width: 150px;background: #BE5E9F; color: #FFF; border-radius: 5px;' + 
+      'font-weight: bold;text-align: center;padding: 10px 5px;display: block; margin-left: 50px;'+ 
+      'padding: 0px 10px 0px 10px;">RECLAMAR<br/>' +
+      'Falta esse remédio!</div></div>'+
       '</div>';
       var infoWindow = new google.maps.InfoWindow({
         content: infoWindowContent
@@ -137,6 +157,18 @@ export class HomePage {
       marker.addListener('click', () => {
         this.map.setCenter(marker.getPosition());
         this.closeAllInfoWindows();
+        infoWindow.addListener('domready', () => {
+          document.getElementById('reclamar').addEventListener('click', ($element) => {
+            console.log($element.target.attributes[0].value);
+            var str = $element.target.attributes[0].value;
+            var ids = str.split("|");
+            console.log(ids);
+            jQuery.get( "https://cademeuremedio.herokuapp.com/denuncia/" + ids[0] + "/" + ids[1], function( data ) {
+              console.log( "Data Loaded: ");
+              console.log( data );
+            });
+          });
+        });
         infoWindow.open(this.map, marker);
         if(!this.infoWindows){
           this.infoWindows = [];
@@ -175,7 +207,7 @@ export class HomePage {
             (row.telefone?row.telefone:''),
             (row.turnoAtendimento),
         ];
-        this.addMarker(this.map, row.nomeFantasia, row_position, info);
+        this.addMarker(this.map, row.nomeFantasia, row_position, info, row.codUnidade);
       }
     },
     err => {
