@@ -270,15 +270,23 @@ export class HomePage {
         '?categoria=POSTO%20DE%20SA%C3%9ADE';
       var places = this.httpClient.get(places_url); 
       places.subscribe(data => {
+        var ocultarLocais = [ '6477267', '2692538', '2692090', '2692139', '2692147' ]; 
+        //codCnes: CS SANTINHO, CS INGLESES,CS RATONES, CS SANTO ANTONIO DE LISBOA, CS VARGEM GRANDE
         for(let row of <PostoSaude[]>data) {
-          var row_position = new google.maps.LatLng(row.lat, row.long);
-          var info = [ 
-              (row.logradouro + ', ' + row.numero),
-              (row.bairro),
-              (row.telefone?row.telefone:''),
-              (row.turnoAtendimento),
-          ];
-          this.addMarker(this.map, row.nomeFantasia, row_position, info, row.codUnidade);
+          console.log(row.nomeFantasia);
+          console.log(row);
+          if(ocultarLocais.indexOf(String(row.codCnes)) == -1){
+            var row_position = new google.maps.LatLng(row.lat, row.long);
+            var info = [ 
+                (row.logradouro + ', ' + row.numero),
+                (row.bairro),
+                (row.telefone?row.telefone:''),
+                (row.turnoAtendimento),
+            ];
+            this.addMarker(this.map, row.nomeFantasia, row_position, info, row.codUnidade);
+          }else{
+            console.log('**ocultando');
+          }
         }
       },
       err => {
