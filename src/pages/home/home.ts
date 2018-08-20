@@ -156,6 +156,9 @@ export class HomePage {
             //numberMarker = data.resultado;
             var numberMarker = 1;
             numberMarker = data.resultado;
+            if (numberMarker==0){
+              numberMarker = 1;
+            }
             console.log('numberMarker: '+numberMarker);
             console.log((title=='ME'?'assets/imgs/marker-me.png':'assets/imgs/marker'+numberMarker+'.png'));
             var marker = new google.maps.Marker({
