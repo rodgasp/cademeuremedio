@@ -1,3 +1,5 @@
+Este repositório foi movido para o github do projeto: https://github.com/cademeuremedio/front-end
+
 # Cadê meu Remédio?
 Frontend - Passo a passo para dar build no app (Android):
 * Instalar o NodeJS (versão 10.9.0 ou posterior), disponível em https://nodejs.org/en/;
